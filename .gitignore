@@ -1,0 +1,5 @@
+.venv
+test.py
+cached_books/
+editifi/
+nltk_tryout.py

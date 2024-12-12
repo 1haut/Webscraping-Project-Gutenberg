@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-import time
+# import time
 import pandas as pd
 import json
 import itertools
@@ -21,14 +21,17 @@ with open("cached_books/cache.json", "r") as books_cache:
 # Moby Dick Project Gutenberg
 # url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
 
-url = "https://books.toscrape.com/catalogue/the-dirty-little-secrets-of-getting-your-dream-job_994/index.html"
+url = "https://books.toscrape.com/catalogue/soumission_998/index.html"
 
 
 # Send request if text not in cache
 def requesting_web(url):
     print("Getting content from web...")
     result = requests.get(url)
-    return result.text
+    result.encoding = "utf-8"
+    if result.raise_for_status() == None:
+        return result.text
+    result.raise_for_status()
 
 # Extract text
 def clean_up(html_content):

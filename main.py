@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-# import time
+import time
 import pandas as pd
 import json
 import itertools
@@ -8,7 +8,6 @@ import itertools
 # current_time = time.ctime(time.time())
 
 # cache = {}
-
 
 with open("cached_books/cache.json", "r") as books_cache:
     try:

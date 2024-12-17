@@ -2,7 +2,7 @@ import unittest
 from scrape import requesting_web
 
 
-class TextScraping(unittest.TestCase):
+class TestScraping(unittest.TestCase):
     def test_url_req(self):
        """
        Test url for a valid website
@@ -17,9 +17,10 @@ class TextScraping(unittest.TestCase):
         self.assertEqual(page_content.raise_for_status(), None)
 
     def test_faulty_site(self):
-        TEST_URL = "https://google.com/not"
-        page_content = requesting_web(TEST_URL)
-        self.assertNotEqual(page_content.raise_for_status(), None)
+        with self.assertRaises(HTTPError):
+            TEST_URL = "https://opensource.org/not"
+            page_content = requesting_web(TEST_URL)
+            self.assertNotEqual(page_content.status_code, 404)
 
 
 if __name__ == "__main__":

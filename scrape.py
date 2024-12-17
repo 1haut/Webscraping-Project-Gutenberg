@@ -1,26 +1,20 @@
 from bs4 import BeautifulSoup
 from datetime import datetime
 import requests
-import time
 import pandas as pd
 import json
 
 now = datetime.now()
 
-with open("cached_books/cache2.json", "r") as books_cache:
+with open("books/list_cache.json", "r") as books_cache:
     try:
         cache = json.load(books_cache)
     except json.decoder.JSONDecodeError:
+        print("The cache is empty or does not exist.")
         cache = {}
-        print("The cache is empty.")
-
-
+        
 # Moby Dick Project Gutenberg
-# url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
-
-# url = "https://books.toscrape.com/catalogue/soumission_998/index.html"
-
-url = "https://openddddddddddsource.org/not"
+url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
 
 # Send request if text not in cache
 def requesting_web(url):
@@ -34,7 +28,7 @@ def requesting_web(url):
     if result.status_code == 503: # The servers are down
         raise ConnectionError("HTTP 503 - Service Unavailable")
     
-    if result.status_code == 404: # Link not found
+    if result.status_code == 404: # Url not found
         raise Exception("404 Not Found")
     
     result.raise_for_status()
@@ -63,9 +57,9 @@ def get_book(url):
         cache[url] = clean_up(html_content)
 
 if __name__ == "__main__":
-    current_time = now.strftime("%H:%M:%S")
-    print(current_time)
+    now.strftime("%H:%M:%S")
+    print(now.strftime("%H:%M:%S"))
     get_book(url)
     
-    # with open("cached_books/cache.json", "w") as books_cache:
-    #     books_cache.write(json.dumps(cache))
+    with open("books/list_cache.json", "w") as books_cache:
+        books_cache.write(json.dumps(cache))

@@ -57,7 +57,6 @@ def get_book(url):
         cache[url] = clean_up(html_content)
 
 if __name__ == "__main__":
-    now.strftime("%H:%M:%S")
     print(now.strftime("%H:%M:%S"))
     get_book(url)
     

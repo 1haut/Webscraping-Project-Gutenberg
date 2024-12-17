@@ -4,3 +4,4 @@ cached_books/
 editifi/
 nltk_tryout.py
 __pycache__/
+analysis_local.py

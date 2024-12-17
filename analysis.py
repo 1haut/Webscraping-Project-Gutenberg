@@ -12,14 +12,17 @@ from nltk.corpus import wordnet
 # BEGIN - Scraping of web page
 
 # END - Scraping of web page
-with open("cached_books/cache.json", "r") as books_cache:
+
+
+with open("books/list_cache.json", "r") as books_cache:
     try:
         cache = json.load(books_cache)
     except json.decoder.JSONDecodeError:
         cache = {}
         print("The cache is empty.")
 
-md_snippet = list(cache.values())[2]
+#
+moby_dick = list(cache.items())[0]
 
 def tokenize(text):
     tokens = nltk.word_tokenize(text)
@@ -43,7 +46,6 @@ def stemming_porter(li):
     pstemmer = PorterStemmer()
 
     result = []
-    # Better for DRY?
     for word in li:
         word = pstemmer.stem(word)
         result.append(word)
@@ -124,6 +126,6 @@ def word_analysis(sample_text):
 
     
 if __name__ == "__main__":
-    word_analysis(md_snippet)
+    word_analysis(moby_dick)
 
 ## Extra: use pandas dataframe for display of word frequency

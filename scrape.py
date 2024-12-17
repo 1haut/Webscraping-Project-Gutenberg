@@ -4,7 +4,6 @@ import requests
 import time
 import pandas as pd
 import json
-import itertools
 
 now = datetime.now()
 
@@ -17,25 +16,28 @@ with open("cached_books/cache2.json", "r") as books_cache:
 
 
 # Moby Dick Project Gutenberg
-url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
+# url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
 
 # url = "https://books.toscrape.com/catalogue/soumission_998/index.html"
 
-# url = "https://openddddddddddsource.org/not"
+url = "https://openddddddddddsource.org/not"
 
 # Send request if text not in cache
 def requesting_web(url):
-    try:
-        print("Getting content from web...")
-        result = requests.get(url)
-        result.encoding = "utf-8"
-        if result.raise_for_status() == None:
-            return result
-    except requests.exceptions.HTTPError as httperror:
-        print(f"HTTPError: {httperror}")
-    except Exception as e:
-        # Extract and print only the name of the exception
-        print(e.__class__.__name__, e)
+    
+    print("Getting content from web...")
+    result = requests.get(url)
+    result.encoding = "utf-8"
+    if result.status_code == 200: # All is well
+        return result
+    
+    if result.status_code == 503: # The servers are down
+        raise ConnectionError("HTTP 503 - Service Unavailable")
+    
+    if result.status_code == 404: # Link not found
+        raise Exception("404 Not Found")
+    
+    result.raise_for_status()
     
 # Extract text
 def clean_up(html_content):

@@ -1,5 +1,5 @@
 import unittest
-from scrape import requesting_web
+import scrape
 
 
 class TestScraping(unittest.TestCase):
@@ -8,19 +8,18 @@ class TestScraping(unittest.TestCase):
        Test url for a valid website
        """
        TEST_URL = "https://example.com"
-       page_content = requesting_web(TEST_URL)
+       page_content = scrape.requesting_web(TEST_URL)
        self.assertEqual(page_content.status_code, 200)
 
     def test_raise_for_status(self):
         TEST_URL = "https://example.com"
-        page_content = requesting_web(TEST_URL)
+        page_content = scrape.requesting_web(TEST_URL)
         self.assertEqual(page_content.raise_for_status(), None)
 
     def test_faulty_site(self):
-        with self.assertRaises(HTTPError):
+        with self.assertRaises(Exception):
             TEST_URL = "https://opensource.org/not"
-            page_content = requesting_web(TEST_URL)
-            self.assertNotEqual(page_content.status_code, 404)
+            scrape.requesting_web(TEST_URL)
 
 
 if __name__ == "__main__":

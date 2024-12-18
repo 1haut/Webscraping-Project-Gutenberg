@@ -12,8 +12,6 @@ from nltk.corpus import wordnet
 # BEGIN - Scraping of web page
 
 # END - Scraping of web page
-
-
 with open("books/list_cache.json", "r") as books_cache:
     try:
         cache = json.load(books_cache)
@@ -21,7 +19,6 @@ with open("books/list_cache.json", "r") as books_cache:
         cache = {}
         print("The cache is empty.")
 
-#
 moby_dick = list(cache.items())[0]
 
 def tokenize(text):
@@ -31,9 +28,10 @@ def tokenize(text):
     return words
 
 # Filter stopwords
-def filter_stopwords(text):
+def filter_stopwords(words):
     stop_words = set(stopwords.words('english'))
-    words = tokenize(text)
+    if isinstance(words, str):
+        words = tokenize(words)
 
     filtered_list = []
     # Filtering of stop words
@@ -121,6 +119,8 @@ def word_analysis(sample_text):
     }
 
     df = pd.DataFrame(data)
+
+    # word_frequency & most_common words combine?
 
     print(df.to_string(index=False))
 

@@ -16,6 +16,7 @@ with open("books/list_cache.json", "r") as books_cache:
 # Moby Dick Project Gutenberg
 url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
 
+
 # Send request if text not in cache
 def requesting_web(url):
     
@@ -42,6 +43,16 @@ def clean_up(html_content):
 
     print(title)
     soup_content = soup.find_all("div", class_ = "chapter")
+
+    # TBFixed
+    # a_tag = soup.find("h1")
+    # b_tag = soup.find(id="pg-footer")
+
+    # content = []
+    # for sibling in a_tag.find_next_siblings():
+    #     if sibling == b_tag:
+    #         break
+    #     content.append(str(sibling))
     
     book = []
     for chapter in soup_content:

@@ -1,5 +1,6 @@
 import unittest
 import scrape
+import analysis
 
 
 class TestScraping(unittest.TestCase):
@@ -21,6 +22,23 @@ class TestScraping(unittest.TestCase):
             TEST_URL = "https://opensource.org/not"
             scrape.requesting_web(TEST_URL)
 
+class TestAnalysis(unittest.TestCase):
+    def test_word_frequency_string(self):
+        """Word frequency function takes a string argument"""
+        s = "The future belongs to those who believe in the beauty of their dreams"
+        func = analysis.word_frequency(s)
+        self.assertIsInstance(func, dict)
+
+    def test_word_frequency_list(self):
+        """Word frequency function takes a list argument"""
+        li = ["hello", "hei", "hola", "bonjour", "hei"]
+        func = analysis.word_frequency(li)
+        self.assertIsInstance(func, dict)
+
+    def test_word_frequency_most_common_word(self):
+        li = ["hello", "hei", "hola", "bonjour", "hei"]
+        func = analysis.word_frequency(li)
+        self.assertEqual(list(func)[0], "hei")
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

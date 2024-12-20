@@ -36,12 +36,20 @@ def grab_book(url):
             text = "".join(content)
 
             cache[url] = text
+            
+            # cache[url] = "".join(content)
+
+            if len(text) > 1000:
+                print("Successfully grabbed book!")
+
+            # return cache[url]
+
+            return text
         
-        if result.status_code == 503: # The servers are down
-            raise ConnectionError("HTTP 503 - Service Unavailable")
-        
-        if result.status_code == 404: # Url not found
-            raise Exception("404 Not Found")
+        result.raise_for_status()
+
+    else:
+        return cache[url]
         
 
 if __name__ == "__main__":

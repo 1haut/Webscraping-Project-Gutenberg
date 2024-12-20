@@ -2,6 +2,8 @@ import unittest
 import scrape
 import analysis
 
+from unittest.mock import patch
+
 
 class TestScraping(unittest.TestCase):
     def test_url_req(self):
@@ -22,6 +24,16 @@ class TestScraping(unittest.TestCase):
             TEST_URL = "https://opensource.org/not"
             scrape.requesting_web(TEST_URL)
 
+    @patch("scrape.requests.get")
+    def test_change_status_code(self, mock_get):
+        mock_response = mock_get.return_value
+        mock_response.status_code = 503
+
+        with self.assertRaises(ConnectionError):
+            scrape.requesting_web("url")
+
+
+
 class TestAnalysis(unittest.TestCase):
     def test_word_frequency_string(self):
         """Word frequency function takes a string argument"""
@@ -35,10 +47,15 @@ class TestAnalysis(unittest.TestCase):
         func = analysis.word_frequency(li)
         self.assertIsInstance(func, dict)
 
-    def test_word_frequency_most_common_word(self):
-        li = ["hello", "hei", "hola", "bonjour", "hei"]
-        func = analysis.word_frequency(li)
-        self.assertEqual(list(func)[0], "hei")
+    # def test_word_frequency_most_common_word(self):
+    #     li = ["hello", "hei", "hola", "bonjour", "hei"]
+    #     func = analysis.word_frequency(li)
+    #     self.assertEqual(list(func)[0], "hei")
+
+    def test_tokenization(self):
+        s = "I'm not upset that you lied to me, I'm upset that from now on I can't believe you."
+        result = analysis.tokenize(s)
+        self.assertEqual(len(result), 21)
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

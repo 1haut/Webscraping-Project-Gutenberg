@@ -14,8 +14,11 @@ with open("books/list_cache.json", "r") as books_cache:
         cache = {}
         
 # Moby Dick Project Gutenberg
-url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
+# url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
 
+# url = "https://www.octoparse.com/blog/no/"
+
+url = "https://httpstat.us/503"
 
 # Send request if text not in cache
 def requesting_web(url):
@@ -29,10 +32,9 @@ def requesting_web(url):
     if result.status_code == 503: # The servers are down
         raise ConnectionError("HTTP 503 - Service Unavailable")
     
-    # if result.status_code == 404: # Url not found
-    #     raise Exception("404 Not Found")
+    if result.status_code == 404: # Url not found
+        raise Exception("404 Not Found")
     
-    result.raise_for_status()
     
 # Extract text
 def clean_up(html_content):

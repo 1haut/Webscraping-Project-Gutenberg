@@ -29,8 +29,8 @@ def requesting_web(url):
     if result.status_code == 503: # The servers are down
         raise ConnectionError("HTTP 503 - Service Unavailable")
     
-    if result.status_code == 404: # Url not found
-        raise Exception("404 Not Found")
+    # if result.status_code == 404: # Url not found
+    #     raise Exception("404 Not Found")
     
     result.raise_for_status()
     

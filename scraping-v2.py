@@ -39,7 +39,7 @@ def grab_book(url):
             
             # cache[url] = "".join(content)
 
-            if len(text) > 1000:
+            if len(text) > 10000:
                 print("Successfully grabbed book!")
 
             # return cache[url]

@@ -46,7 +46,7 @@ def stemming_porter(data):
 
     return result
 
-def lemmization(text):
+def lemmization(words_list):
     # Downloads a word tagger if it does not exist
     nltk.download('averaged_perceptron_tagger')
 
@@ -65,17 +65,18 @@ def lemmization(text):
             return wordnet.ADV
         else:          
             return None
+        
+    if type(words_list) == 'str': # Incase the user did not filter stopwords
+        words_list = tokenize(words_list)
 
-    words_list = tokenize(text)
     words_list_tagged = nltk.pos_tag(words_list)
 
     word_list_root_form = []
     for word, tag in words_list_tagged:
-        word_list_root_form.append(lemmatizer.lemmatize(word, pos_tagger(tag)))
-        # if pos_tagger(tag) == None:
-        #     wordlist_lemmatized.append(word)
-        # else:
-        #     wordlist_lemmatized.append(lemmatizer.lemmatize(word, pos_tagger(tag)))
+        if pos_tagger(tag) == None:
+            word_list_root_form.append(word)
+        else:
+            word_list_root_form.append(lemmatizer.lemmatize(word, pos_tagger(tag)))
 
     return word_list_root_form
 
@@ -93,10 +94,6 @@ def word_frequency(n, data):
 
     common_words = sorted(word_counter.items(), key=lambda item: item[1], reverse=True) # Most common words
     most_frequent_words = common_words[:n]
-
-    # print(dict(common_words))
-    # print(word)
-    # print(dict(most_frequent_words))
 
     return dict(most_frequent_words)
 
@@ -116,18 +113,16 @@ def display_dataframe(info):
     print(df.to_string(index=False))
 
 if __name__ == "__main__":
-    # Optional
-    text_words = filter_stopwords(md_snippet)
+    text_words = filter_stopwords(md_snippet)  # Optional, but recommended
 
     # Optional
     # # Pick one or the other, or none at all
-    root_words = stemming_porter(text_words)
-    # root_words = lemmization(text_words)
+    # root_words = stemming_porter(text_words)
+    root_words = lemmization(text_words)
 
     most_common_words = word_frequency(5, root_words)
 
-    # Optional
-    display_dataframe(most_common_words)
+    display_dataframe(most_common_words)  # Optional
 
 
 

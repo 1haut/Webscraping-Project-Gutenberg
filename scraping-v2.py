@@ -13,7 +13,9 @@ with open("books/list_cache.json", "r") as books_cache:
         cache = {}
 
 # Moby Dick Project Gutenberg
-url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
+# url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
+
+url = 'https://httpstat.us/503'
 
 def grab_book(url):
     # Check if book is saved in cache
@@ -24,26 +26,25 @@ def grab_book(url):
 
         if result.status_code == 200: # All is well
             soup = BeautifulSoup(result.text, "lxml")
-            a_tag = soup.find("h1")
+            a_tag = soup.find("h1") # Title
             b_tag = soup.find(id="pg-footer")
 
             content = []
             for chapter in a_tag.find_next_siblings():
                 if chapter == b_tag:
                     break
+                chapter = chapter.text.strip()
                 content.append(str(chapter))
 
             text = "".join(content)
 
             cache[url] = text
-            
             # cache[url] = "".join(content)
-
+        
             if len(text) > 10000:
                 print("Successfully grabbed book!")
 
             # return cache[url]
-
             return text
         
         result.raise_for_status()

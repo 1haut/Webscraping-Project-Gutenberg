@@ -9,7 +9,7 @@ from nltk.corpus import wordnet
 with open("cached_books/cache.json", "r") as books_cache:
     cache = json.load(books_cache)
 
-md_snippet = list(cache.values())[2]
+md_snippet = cache["md_extract"]
 
 def tokenize(text):
     tokens = nltk.word_tokenize(text)
@@ -66,7 +66,7 @@ def lemmization(words_list):
         else:          
             return None
         
-    if type(words_list) == 'str': # Incase the user did not filter stopwords
+    if isinstance(words_list, str): # Incase the user did not filter stopwords
         words_list = tokenize(words_list)
 
     words_list_tagged = nltk.pos_tag(words_list)
@@ -95,6 +95,8 @@ def word_frequency(n, data):
     common_words = sorted(word_counter.items(), key=lambda item: item[1], reverse=True) # Most common words
     most_frequent_words = common_words[:n]
 
+    print(dict(most_frequent_words))
+
     return dict(most_frequent_words)
 
 def display_dataframe(info):
@@ -113,7 +115,7 @@ def display_dataframe(info):
     print(df.to_string(index=False))
 
 if __name__ == "__main__":
-    text_words = filter_stopwords(md_snippet)  # Optional, but recommended
+    text_words = filter_stopwords(md_snippet)
 
     # Optional
     # # Pick one or the other, or none at all
@@ -123,13 +125,3 @@ if __name__ == "__main__":
     most_common_words = word_frequency(5, root_words)
 
     display_dataframe(most_common_words)  # Optional
-
-
-
-
-
-
-
-
-
-

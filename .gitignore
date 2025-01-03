@@ -7,3 +7,5 @@ __pycache__/
 analysis_local.py
 sl.py
 hhhh/
+mini_storage/
+.env

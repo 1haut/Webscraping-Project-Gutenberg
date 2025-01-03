@@ -9,7 +9,7 @@ To use this app you need to install:
 - [Python](https://www.python.org/downloads/)
 - [Pypi](https://pypi.org/)
 
-### Installation & Usage
+## Installation & Usage
 1. Fork this repository
 2. Clone this repository
    ```
@@ -25,3 +25,18 @@ To use this app you need to install:
    url = 'https://www.gutenberg.org/cache/epub/1253/pg1253-images.html'
    ```
 5. For analysis of the book, keep the url used in the scraping, enter it in the url variable, and run the file
+
+## Improvements
+Since this is a rather basic web scraper, there are tons of ways to improve the code to add more functions, such as:
+- Improvement of caching
+- More advanced analysis
+- Support for other languages than English
+- Support for scraping of pages
+
+## Contributing
+If for some reason, you want to contribute to the project, follow these steps:
+1. Fork this repository
+2. Create a branch
+3. Make your adjustments and commit them
+4. Push your adjustments to the original branch
+5. Make a pull request

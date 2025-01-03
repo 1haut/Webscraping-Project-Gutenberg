@@ -31,7 +31,8 @@ Since this is a rather basic web scraper, there are tons of ways to improve the 
 - Improvement of caching
 - More advanced analysis
 - Support for other languages than English
-- Support for scraping of pages
+- Support for scraping with content loaded by JavaScript/AJAX
+- Spoofing of headers
 
 ## Contributing
 If for some reason, you want to contribute to the project, follow these steps:

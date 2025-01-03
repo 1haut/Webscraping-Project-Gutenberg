@@ -37,7 +37,7 @@ Since this is a rather basic web scraper, there are tons of ways to improve the 
 ## Contributing
 If for some reason, you want to contribute to the project, follow these steps:
 1. Fork this repository
-2. Create a branch
-3. Make your adjustments and commit them
-4. Push your adjustments to the original branch
+2. Create a branch `git checkout -b <branch_name>`
+3. Make your adjustments and commit them `git commit -m <commit message>`
+4. Push your adjustments to the original branch `git push -u origin <project_name>/<local>`
 5. Make a pull request

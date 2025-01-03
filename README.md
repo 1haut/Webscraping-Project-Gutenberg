@@ -15,7 +15,13 @@ To use this app you need to install:
    ```
    git clone https://github.com/1haut/Webscraping-Project-Gutenberg.git
    ```
-3. Use Pypi to install the required packages
+3. Install the required packages
    ```
    pip install requests beautifulsoup4 nltk
-   ``` 
+   ```
+4. Enter the url of the web version of the book at the top of the program, and run the file
+   ```python
+   # A Simple Soul by Gustave Flaubert
+   url = 'https://www.gutenberg.org/cache/epub/1253/pg1253-images.html'
+   ```
+5. For analysis of the book, keep the url used in the scraping, enter it in the url variable, and run the file

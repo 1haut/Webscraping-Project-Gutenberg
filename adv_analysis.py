@@ -49,28 +49,18 @@ def speed_test():
 
     return li
 
-print(
-    timeit.timeit(
-        "speed_test()",
-        globals=globals(),
-        number=1,
-    )
-)
-
-print(
-    timeit.timeit(
-        "speed_test()",
-        globals=globals(),
-        number=1,
-    )
-)
-
-
 # Test api-key
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
+
+api_key = os.getenv("API-KEY")
+
+if not api_key:
+    raise Exception("Key not reached...")
+
+word = "whale"
 
 
 

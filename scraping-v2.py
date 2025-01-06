@@ -17,7 +17,7 @@ with open("books/list_cache.json", "r") as books_cache:
 
 url = 'https://httpstat.us/503'
 
-url = 'https://www.gutenberg.org/cache/epub/1253/pg1253-images.html'
+url = 'https://www.gutenberg.org/cache/epub/12122/pg12122-images.html'
 
 def grab_book(url):
     # Check if book is saved in cache

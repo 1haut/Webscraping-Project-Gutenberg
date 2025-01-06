@@ -120,12 +120,9 @@ def word_analysis(sample_text):
 
     df = pd.DataFrame(data)
 
-    # word_frequency & most_common words combine?
 
     print(df.to_string(index=False))
 
     
 if __name__ == "__main__":
     word_analysis(moby_dick)
-
-## Extra: use pandas dataframe for display of word frequency

@@ -1,0 +1,9 @@
+Title: Moby Dick 
+
+Most frequent words: 
+Word  Frequency
+ the      14266
+  of       6576
+ and       6378 
+
+Number of unique words: over 10 thousand

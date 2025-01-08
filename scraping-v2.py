@@ -28,12 +28,12 @@ def grab_book(url):
 
         if result.status_code == 200: # All is well
             soup = BeautifulSoup(result.text, "lxml")
-            a_tag = soup.find("h1") # Title
-            b_tag = soup.find(id="pg-footer")
+            title = soup.find("h1") # Title
+            end_book = soup.find(id="pg-footer")
 
             content = []
-            for chapter in a_tag.find_next_siblings():
-                if chapter == b_tag:
+            for chapter in title.find_next_siblings():
+                if chapter == end_book:
                     break
                 chapter = chapter.text.strip()
                 content.append(str(chapter))

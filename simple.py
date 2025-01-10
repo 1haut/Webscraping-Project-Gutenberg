@@ -5,7 +5,7 @@ import pandas as pd
 import json
 import nltk
 
-# Access cached book
+# Access cached books
 with open("books/list_cache.json", "r") as books_cache:
     try:
         cache = json.load(books_cache)
@@ -23,12 +23,12 @@ def grab_book(url):
         result = requests.get(url)
         result.encoding = "utf-8"
 
-        if result.status_code == 200: # All is well
+        if result.status_code == 200: 
             soup = BeautifulSoup(result.text, "lxml")
             title = soup.find("h1")
             end_book = soup.find(id="pg-footer")
 
-            content = [title]
+            content = [title.text]
             for chapter in title.find_next_siblings():
                 if chapter == end_book:
                     break
@@ -50,16 +50,30 @@ def grab_book(url):
 
         return cache[url]
     
-def tokenize(text):
+def tokenizer(text):
     tokens = nltk.word_tokenize(text)
-    words = [token.lower() for token in tokens if token.lower().islower()] # Convert to lower case and remove punctuation tokens
+
+    words = []
+
+    for token in tokens:
+        # Remove trailing punctuation and convert to lowercase
+        token = token.rstrip(".").lower()
+
+        # Handle tokens containing "—"
+        if "—" in token:
+            words.extend(sub_token.lower().rstrip(".") for sub_token in token.split("—"))
+            continue
+
+        # Add token if it's a valid word
+        if token.isalpha():
+            words.append(token)
 
     return words
     
 def most_frequent(url):
     text = cache[url]
 
-    data = tokenize(text)
+    data = tokenizer(text)
 
     word_counter = {}
     # Get get the word count for text
@@ -72,8 +86,7 @@ def most_frequent(url):
     common_words = sorted(word_counter.items(), key=lambda item: item[1], reverse=True) # Most common words
     most_frequent_words = common_words[:3]
 
-
-    # # Words only used once
+    # Words only used once
     unique_words = []
 
     for key, value in common_words:
@@ -91,11 +104,9 @@ def most_frequent(url):
     r_freq = df.to_string(index=False)
     r_uniq = f"Number of unique words: over {len(unique_words) // 1000} thousand"
 
-    overview = f"Title: Moby Dick \n\nMost frequent words: \n{r_freq} \n\n{r_uniq}"
+    overview = f"Title: Moby Dick \n\nMost frequent words: \n{r_freq} \n\n{r_uniq} \n\n Unique words = {unique_words}"
 
-    print(overview)
-
-    with open("analysis_results/simplepy_analysis.txt", "w") as file:
+    with open("analysis_results/simplepy_analysis.txt", "w", encoding="UTF-8") as file:
         file.write(overview)
 
 

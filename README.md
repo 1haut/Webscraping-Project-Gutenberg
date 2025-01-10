@@ -1,6 +1,6 @@
 # Webscraping Project Gutenberg
 
-This is a simple python app for the scraping of books from [Project Gutenberg](https://www.gutenberg.org/) and basic word analysis with the python packages requests and BeautifulSoup
+This is a simple python app for the scraping of books from [Project Gutenberg](https://www.gutenberg.org/) and basic word analysis with the python packages [requests](https://requests.readthedocs.io/en/latest/) and [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/bs4/doc/)
 
 ## Getting Started
 

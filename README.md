@@ -33,6 +33,7 @@ Since this is a rather basic web scraper, there are tons of ways to improve the 
 - Support for other languages than English
 - Support for scraping with content loaded by JavaScript/AJAX
 - Spoofing of headers
+- More advanced string matching for better searching in the catalogue 
 
 ## Contributing
 If for some reason, you want to contribute to the project, follow these steps:

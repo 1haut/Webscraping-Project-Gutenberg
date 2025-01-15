@@ -19,12 +19,11 @@ To use this app you need to install:
    ```
    pip install requests beautifulsoup4 nltk
    ```
-4. Enter the url of the web version of the book at the top of the program, and run the file
+4. Run `simple.py` or `simple_better_filtering.py` and follow the instructions 
    ```python
    # A Simple Soul by Gustave Flaubert
    url = 'https://www.gutenberg.org/cache/epub/1253/pg1253-images.html'
    ```
-5. For analysis of the book, keep the url used in the scraping, enter it in the url variable, and run the file
 
 ## Improvements
 Since this is a rather basic web scraper, there are tons of ways to improve the code to add more functions, such as:

@@ -4,6 +4,8 @@ import requests
 import pandas as pd
 import json
 import nltk
+import time
+import csv
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer, PorterStemmer
 from nltk.tokenize import word_tokenize
@@ -34,6 +36,37 @@ def choose_book():
         inner_url = user_input
 
     return inner_url
+
+def search_book():
+    with open("Webscraping-Project-Gutenberg/pguterberg/pg_catalog.csv", encoding="UTF-8") as csv_file:
+        reader = csv.DictReader(csv_file)    
+        search_term = "aUsten"
+        result_books = []
+        result_dict = {}
+        for row in reader:
+            if (search_term.lower() in row['Authors'].lower()
+                and row['Type'] == 'Text'
+                and row['Language'] == 'en'):
+            
+                authors = str(row['Authors'].split(";")[0])
+                for num in "1234567890":
+                    authors=authors.replace(num, "")
+                authors = authors.rstrip(",- ")
+
+                result_dict[row['Text#']] = f"{row['Title']} by {authors}"
+                print(f"[{row['Text#']}] {row['Title']} by {authors}")
+
+        ebook_numbers = list(result_dict)
+        
+        choice = input("Choose a book: ")
+        while choice not in ebook_numbers: 
+            print("Sorry, but this choice is invalid, please enter the ebook number your preferred book.")
+            time.sleep(0.5)
+            choice = input("Choose a book: ")
+
+        print(f"You've chosen {result_dict[choice]}. Happy reading!")
+        
+        return f"https://www.gutenberg.org/cache/epub/{choice}/pg{choice}-images.html"
 
 
 def grab_book(url):
@@ -186,8 +219,15 @@ def most_frequent(url):
 if __name__ == "__main__":
     print(datetime.now().strftime("%H:%M:%S"))
     url = choose_book()
+    url = search_book()
     grab_book(url)
     most_frequent(url)
+
+      
     
     # with open("books/list_cache.json", "w") as books_cache:
     #     books_cache.write(json.dumps(cache))
+
+
+
+    

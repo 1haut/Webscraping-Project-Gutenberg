@@ -22,11 +22,10 @@ with open("books/list_cache.json", "r") as books_cache:
 def search_book():
     with open("Webscraping-Project-Gutenberg/pguterberg/pg_catalog.csv", encoding="UTF-8") as csv_file:
         reader = csv.DictReader(csv_file)    
-        search_term = "aUsten"
-        result_books = []
+        search_term = input("Search book here: ")
         result_dict = {}
         for row in reader:
-            if (search_term.lower() in row['Authors'].lower()
+            if ((search_term.lower() in row['Authors'].lower() or search_term.lower() in row['Title'].lower())
                 and row['Type'] == 'Text'
                 and row['Language'] == 'en'):
             
@@ -46,7 +45,10 @@ def search_book():
             time.sleep(0.5)
             choice = input("Choose a book: ")
 
-        print(f"You've chosen {result_dict[choice]}. Happy reading!")
+        print(f"You've chosen {result_dict[choice]}. Happy scraping!")
+
+        global book_title
+        book_title = result_dict[choice]
         
         return f"https://www.gutenberg.org/cache/epub/{choice}/pg{choice}-images.html"
 
@@ -218,11 +220,3 @@ if __name__ == "__main__":
     url = search_book()
     grab_book(url)
     most_frequent(url)
-
-      
-    
-    # with open("books/list_cache.json", "w") as books_cache:
-    #     books_cache.write(json.dumps(cache))
-
-
-

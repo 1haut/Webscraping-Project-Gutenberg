@@ -19,24 +19,6 @@ with open("books/list_cache.json", "r") as books_cache:
         print("The cache is empty or does not exist.")
         cache = {}
 
-# Moby Dick Project Gutenberg
-url = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
-
-def choose_book():
-    user_input = input("Insert the Project Gutenberg url for your chosen book OR a valid Project Gutenberg EBook-No: ")
-
-    while not (user_input.isnumeric() and 0 < int(user_input) < 75000 
-           or (user_input.endswith(".html") and ("gutenberg.org" in user_input))):
-        print("Sorry, that input is invalid, please try again.")
-        user_input = input("Insert the Project Gutenberg url for your chosen book OR a valid Project Gutenberg EBook-No: ")
-
-    if user_input.isnumeric():
-        inner_url = f"https://www.gutenberg.org/cache/epub/{user_input}/pg{user_input}-images.html" 
-    else:
-        inner_url = user_input
-
-    return inner_url
-
 def search_book():
     with open("Webscraping-Project-Gutenberg/pguterberg/pg_catalog.csv", encoding="UTF-8") as csv_file:
         reader = csv.DictReader(csv_file)    
@@ -103,11 +85,26 @@ def grab_book(url):
 
         return cache[url]
     
-def tokenize(text):
+def tokenizer(text):
     tokens = nltk.word_tokenize(text)
-    words = [token.lower() for token in tokens if token.lower().islower()] # Convert to lower case and remove punctuation tokens
+
+    words = []
+
+    for token in tokens:
+        # Remove trailing punctuation and convert to lowercase
+        token = token.rstrip(".").lower()
+
+        # Handle tokens containing "—"
+        if "—" in token:
+            words.extend(sub_token.lower().rstrip(".") for sub_token in token.split("—"))
+            continue
+
+        # Add token if it's a valid word
+        if token.isalpha():
+            words.append(token)
 
     return words
+    
 
 def filter_stopwords(words):
     # Download a list of stopwords if does not exist
@@ -115,7 +112,7 @@ def filter_stopwords(words):
  
     stop_words = set(stopwords.words('english'))
     if isinstance(words, str):
-        words = tokenize(words)
+        words = tokenizer(words)
 
     filtered_list = []
     # Filtering of stop words
@@ -126,7 +123,7 @@ def filter_stopwords(words):
 
 def stemming_porter(data):
     if isinstance(data, str):
-        data = tokenize(data)
+        data = tokenizer(data)
     
     pstemmer = PorterStemmer()
 
@@ -158,7 +155,7 @@ def lemmization(words_list):
             return None
         
     if isinstance(words_list, str): # Incase the user did not filter stopwords
-        words_list = tokenize(words_list)
+        words_list = tokenizer(words_list)
 
     words_list_tagged = nltk.pos_tag(words_list)
 
@@ -174,7 +171,7 @@ def lemmization(words_list):
 def most_frequent(url):
     text = cache[url]
 
-    data = tokenize(text)
+    data = tokenizer(text)
     data = filter_stopwords(data)
     data = lemmization(data)
 
@@ -218,7 +215,6 @@ def most_frequent(url):
 
 if __name__ == "__main__":
     print(datetime.now().strftime("%H:%M:%S"))
-    url = choose_book()
     url = search_book()
     grab_book(url)
     most_frequent(url)
@@ -230,4 +226,3 @@ if __name__ == "__main__":
 
 
 
-    

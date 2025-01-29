@@ -37,6 +37,8 @@ def search_book():
                 result_dict[row['Text#']] = f"{row['Title']} by {authors}"
                 print(f"[{row['Text#']}] {row['Title']} by {authors}")
 
+        
+
         ebook_numbers = list(result_dict)
         
         choice = input("Choose a book: ")
@@ -45,13 +47,12 @@ def search_book():
             time.sleep(0.5)
             choice = input("Choose a book: ")
 
-        print(f"You've chosen {result_dict[choice]}. Happy scraping!")
+        print(f"You've chosen {result_dict[choice]}. ")
 
         global book_title
         book_title = result_dict[choice]
         
         return f"https://www.gutenberg.org/cache/epub/{choice}/pg{choice}-images.html"
-
 
 def grab_book(url):
     # Check if book is saved in cache

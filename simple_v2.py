@@ -6,9 +6,9 @@ import json
 import nltk
 import time
 import csv
+from random import randrange
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer, PorterStemmer
-from nltk.tokenize import word_tokenize
 from nltk.corpus import wordnet
 
 # Access cached book
@@ -21,29 +21,40 @@ with open("books/list_cache.json", "r") as books_cache:
 
 def search_book():
     with open("Webscraping-Project-Gutenberg/pguterberg/pg_catalog.csv", encoding="UTF-8") as csv_file:
-        reader = csv.DictReader(csv_file)    
-        search_term = input("Search book here: ")
+        reader = csv.DictReader(csv_file)
+        
         result_dict = {}
-        for row in reader:
-            if ((search_term.lower() in row['Authors'].lower() or search_term.lower() in row['Title'].lower())
-                and row['Type'] == 'Text'
-                and row['Language'] == 'en'):
-            
-                authors = str(row['Authors'].split(";")[0])
-                for num in "1234567890":
-                    authors=authors.replace(num, "")
-                authors = authors.rstrip(",- ")
 
-                result_dict[row['Text#']] = f"{row['Title']} by {authors}"
-                print(f"[{row['Text#']}] {row['Title']} by {authors}")
+        # Keep prompting the user for a search term until there are results
+        while not result_dict:
+            search_term = input("Search book here: ").strip()
 
-        
+            # Reset the dictionary for each new search
+            result_dict = {}
 
+            for row in reader:
+                if ((search_term.lower() in row['Authors'].lower() or search_term.lower() in row['Title'].lower())
+                    and row['Type'] == 'Text'
+                    and row['Language'] == 'en'):
+
+                    authors = str(row['Authors'].split(";")[0])
+                    for num in "1234567890":
+                        authors = authors.replace(num, "")
+                    authors = authors.rstrip(",- ")
+
+                    result_dict[row['Text#']] = f"{row['Title']} by {authors}"
+                    print(f"[{row['Text#']}] {row['Title']} by {authors}")
+
+            if not result_dict:
+                print("No results found. Please try again.")
+
+        # Get ebook numbers
         ebook_numbers = list(result_dict)
-        
+
+        # Prompt user to choose a valid book
         choice = input("Choose a book: ")
-        while choice not in ebook_numbers: 
-            print("Sorry, but this choice is invalid, please enter the ebook number your preferred book.")
+        while choice not in ebook_numbers:
+            print("Sorry, but this choice is invalid, please enter the ebook number of your preferred book.")
             time.sleep(0.5)
             choice = input("Choose a book: ")
 
@@ -89,10 +100,11 @@ def grab_book(url):
         return cache[url]
     
 def tokenizer(text):
+    nltk.download('punkt_tab')
+
     tokens = nltk.word_tokenize(text)
 
     words = []
-
     for token in tokens:
         # Remove trailing punctuation and convert to lowercase
         token = token.rstrip(".").lower()
@@ -107,6 +119,43 @@ def tokenizer(text):
             words.append(token)
 
     return words
+
+def frequency_analysis(list_info):
+    word_counter = {}
+    # Get get the word count for text
+    for word in list_info:
+        if word in word_counter:
+            word_counter[word] += 1
+        else:
+            word_counter[word] = 1
+
+    common_words = sorted(word_counter.items(), key=lambda item: item[1], reverse=True) # Most common words
+    most_frequent_words = common_words[:3]
+
+    # Words only used once
+    unique_words = []
+
+    for key, value in common_words:
+        if value == 1:
+            unique_words.append(key)
+
+    words, occurences = zip(*most_frequent_words)
+
+    # Present most frequent words in a dataframe
+    data = {
+        "Word":words,
+        "Frequency":occurences
+    }
+    df = pd.DataFrame(data)
+    df_noindex = df.to_string(index=False)
+
+    # List a sample of 20 unique words
+    num_unique_words = len(unique_words)
+    random_index = randrange(0, num_unique_words - 20)
+    sample_unique_words = unique_words[random_index:random_index + 20]
+    
+    analysis = f"Most frequent words:\n{df_noindex}\n\nNumber of unique words: {num_unique_words}\n\nSample of unique words:  {sample_unique_words}\n\n"
+    return analysis
     
 
 def filter_stopwords(words):
@@ -114,6 +163,8 @@ def filter_stopwords(words):
     nltk.download('stopwords')
  
     stop_words = set(stopwords.words('english'))
+
+    # Tokenize a text
     if isinstance(words, str):
         words = tokenizer(words)
 
@@ -122,6 +173,7 @@ def filter_stopwords(words):
     for word in words:
         if word not in stop_words:
             filtered_list.append(word)
+
     return filtered_list
 
 def stemming_porter(data):
@@ -130,19 +182,24 @@ def stemming_porter(data):
     
     pstemmer = PorterStemmer()
 
-    result = []
+    list_stemmed = []
     for word in data:
         word = pstemmer.stem(word)
-        result.append(word)
+        list_stemmed.append(word)
 
-    return result
+    return list_stemmed
 
-def lemmization(words_list):
+def lemmatization(words_list):
     # Downloads a word tagger if it does not exist
-    nltk.download('averaged_perceptron_tagger')
+    nltk.download('averaged_perceptron_tagger_eng')
+    nltk.download('wordnet')
 
     # Initialize Lemmatizer
     lemmatizer = WordNetLemmatizer()
+
+    # Handle string argument
+    if isinstance(words_list, str):
+        words_list = tokenizer(words_list)
 
     # Tag each word in categories
     def pos_tagger(nltk_tag):
@@ -156,9 +213,6 @@ def lemmization(words_list):
             return wordnet.ADV
         else:          
             return None
-        
-    if isinstance(words_list, str): # Incase the user did not filter stopwords
-        words_list = tokenizer(words_list)
 
     words_list_tagged = nltk.pos_tag(words_list)
 
@@ -170,54 +224,28 @@ def lemmization(words_list):
             word_list_root_form.append(lemmatizer.lemmatize(word, pos_tagger(tag)))
 
     return word_list_root_form
-    
-def most_frequent(url):
-    text = cache[url]
-
-    data = tokenizer(text)
-    data = filter_stopwords(data)
-    data = lemmization(data)
-
-    word_counter = {}
-    # Get get the word count for text
-    for word in data:
-        if word in word_counter:
-            word_counter[word] += 1
-        else:
-            word_counter[word] = 1
-
-    common_words = sorted(word_counter.items(), key=lambda item: item[1], reverse=True) # Most common words
-    most_frequent_words = common_words[:3]
-
-
-    # # Words only used once
-    unique_words = []
-
-    for key, value in common_words:
-        if value == 1:
-            unique_words.append(key)
-
-    words, occurances = zip(*most_frequent_words)
-
-    data = {
-        "Word":words,
-        "Frequency":occurances
-    }
-    df = pd.DataFrame(data)
-
-    r_freq = df.to_string(index=False)
-    r_uniq = f"Number of unique words: over {len(unique_words) // 1000} thousand"
-
-    overview = f"Title: Moby Dick \n\nMost frequent words: \n{r_freq} \n\n{r_uniq}"
-
-    print(overview)
-
-    with open("analysis_results/simplepy_analysis.txt", "w") as file:
-        file.write(overview)
 
 
 if __name__ == "__main__":
     print(datetime.now().strftime("%H:%M:%S"))
     url = search_book()
-    grab_book(url)
-    most_frequent(url)
+    book_text = grab_book(url)
+
+    # Save book in cache
+    with open("cached_books/cache.json", "w") as books_cache:
+        books_cache.write(json.dumps(cache))
+
+    # Analyze book text filtering stopwords 
+    stopwords_list = filter_stopwords(book_text)
+    stopwords_analysis = "Stopword Analysis \n\n" + frequency_analysis(stopwords_list)
+
+    # Analyze book text filtering stopwords and stemming words
+    stemmed_stopwords_list = stemming_porter(stopwords_list)
+    ssl_analysis = "Stemming Analysis \n\n" + frequency_analysis(stemmed_stopwords_list)
+
+    # Analyze book text filtering stopwords and lemmatizing words
+    lemmatized_stopword_list = lemmatization(stopwords_list)
+    lsl_analysis = "Lemmatization Analysis \n\n" +  frequency_analysis(lemmatized_stopword_list)
+
+    with open("Webscraping-Project-Gutenberg/analysis_results/base_analysis.txt", "w") as analysis_file:
+        analysis_file.write(stopwords_analysis + ssl_analysis + lsl_analysis)

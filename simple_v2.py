@@ -59,11 +59,8 @@ def search_book():
             choice = input("Choose a book: ")
 
         print(f"You've chosen {result_dict[choice]}. ")
-
-        global book_title
-        book_title = result_dict[choice]
         
-        return f"https://www.gutenberg.org/cache/epub/{choice}/pg{choice}-images.html"
+        return (f"https://www.gutenberg.org/cache/epub/{choice}/pg{choice}-images.html", result_dict[choice])
 
 def grab_book(url):
     # Check if book is saved in cache
@@ -225,10 +222,9 @@ def lemmatization(words_list):
 
     return word_list_root_form
 
-
 if __name__ == "__main__":
     print(datetime.now().strftime("%H:%M:%S"))
-    url = search_book()
+    url, book_title = search_book()
     book_text = grab_book(url)
 
     # Save book in cache

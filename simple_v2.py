@@ -1,66 +1,66 @@
-from bs4 import BeautifulSoup
-from datetime import datetime
-import requests
-import pandas as pd
+import re
+import csv
 import json
 import nltk
 import time
-import csv
+import requests
+import pandas as pd
 from random import randrange
-from nltk.corpus import stopwords
+from bs4 import BeautifulSoup
+from datetime import datetime
+from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer, PorterStemmer
-from nltk.corpus import wordnet
 
 # Access cached book
-with open("books/list_cache.json", "r") as books_cache:
+with open("Webscraping-Project-Gutenberg/books/list_cache.json", "r") as books_cache:
     try:
         cache = json.load(books_cache)
     except json.decoder.JSONDecodeError:
         print("The cache is empty or does not exist.")
         cache = {}
 
-def search_book():
-    with open("Webscraping-Project-Gutenberg/pguterberg/pg_catalog.csv", encoding="UTF-8") as csv_file:
-        reader = csv.DictReader(csv_file)
-        
+def search_book(csv_file):
+    reader = csv.DictReader(csv_file)
+    
+    result_dict = {}
+
+    # Keep prompting the user for a search term until there are results
+    while not result_dict:
+        search_term = input("Search book here: ").strip()
+
+        # Reset the dictionary for each new search
         result_dict = {}
 
-        # Keep prompting the user for a search term until there are results
-        while not result_dict:
-            search_term = input("Search book here: ").strip()
+        for row in reader:
+            if (
+                (search_term.lower() in row['Authors'].lower() or search_term.lower() in row['Title'].lower())
+                and row['Type'] == 'Text'
+                and row['Language'] == 'en'):
 
-            # Reset the dictionary for each new search
-            result_dict = {}
+                authors = str(row['Authors'].split(";")[0])
+                for num in "1234567890":
+                    authors = authors.replace(num, "")
+                authors = authors.rstrip(",- ")
 
-            for row in reader:
-                if ((search_term.lower() in row['Authors'].lower() or search_term.lower() in row['Title'].lower())
-                    and row['Type'] == 'Text'
-                    and row['Language'] == 'en'):
+                result_dict[row['Text#']] = f"{row['Title']} by {authors}"
+                print(f"[{row['Text#']}] {row['Title']} by {authors}")
 
-                    authors = str(row['Authors'].split(";")[0])
-                    for num in "1234567890":
-                        authors = authors.replace(num, "")
-                    authors = authors.rstrip(",- ")
+        if not result_dict:
+            print("No results found. Please try again.")
 
-                    result_dict[row['Text#']] = f"{row['Title']} by {authors}"
-                    print(f"[{row['Text#']}] {row['Title']} by {authors}")
+    # Get ebook numbers
+    ebook_numbers = list(result_dict)
 
-            if not result_dict:
-                print("No results found. Please try again.")
-
-        # Get ebook numbers
-        ebook_numbers = list(result_dict)
-
-        # Prompt user to choose a valid book
+    # Prompt user to choose a valid book
+    choice = input("Choose a book: ")
+    while choice not in ebook_numbers:
+        print("Sorry, but this choice is invalid, please enter the ebook number of your preferred book.")
+        time.sleep(0.5)
         choice = input("Choose a book: ")
-        while choice not in ebook_numbers:
-            print("Sorry, but this choice is invalid, please enter the ebook number of your preferred book.")
-            time.sleep(0.5)
-            choice = input("Choose a book: ")
 
-        print(f"You've chosen {result_dict[choice]}. ")
-        
-        return (f"https://www.gutenberg.org/cache/epub/{choice}/pg{choice}-images.html", result_dict[choice])
+    print(f"You've chosen {result_dict[choice]}.")
+    
+    return (f"https://www.gutenberg.org/cache/epub/{choice}/pg{choice}-images.html", result_dict[choice])
 
 def grab_book(url):
     # Check if book is saved in cache
@@ -70,11 +70,11 @@ def grab_book(url):
         result.encoding = "utf-8"
 
         if result.status_code == 200: # All is well
-            soup = BeautifulSoup(result.text, "lxml")
+            soup = BeautifulSoup(result.text, "html.parser")
             title = soup.find("h1")
             end_book = soup.find(id="pg-footer")
 
-            content = [title]
+            content = [str(title.text.strip())]
             for chapter in title.find_next_siblings():
                 if chapter == end_book:
                     break
@@ -222,13 +222,21 @@ def lemmatization(words_list):
 
     return word_list_root_form
 
+def snake_case(s):
+    return '_'.join(
+        re.sub('([A-Z][a-z]+)', r' \1',
+        re.sub('([A-Z]+)', r' \1',
+        s.replace('-', ' '))).split()).lower()
+
 if __name__ == "__main__":
     print(datetime.now().strftime("%H:%M:%S"))
-    url, book_title = search_book()
+    book_list_file = open("Webscraping-Project-Gutenberg/pguterberg/pg_catalog.csv", encoding="UTF-8")
+    url, book_title = search_book(book_list_file)
+    book_title = snake_case(book_title)
     book_text = grab_book(url)
 
     # Save book in cache
-    with open("cached_books/cache.json", "w") as books_cache:
+    with open("Webscraping-Project-Gutenberg/cached_books/cache.json", "w") as books_cache:
         books_cache.write(json.dumps(cache))
 
     # Analyze book text filtering stopwords 
@@ -243,5 +251,5 @@ if __name__ == "__main__":
     lemmatized_stopword_list = lemmatization(stopwords_list)
     lsl_analysis = "Lemmatization Analysis \n\n" +  frequency_analysis(lemmatized_stopword_list)
 
-    with open("Webscraping-Project-Gutenberg/analysis_results/base_analysis.txt", "w") as analysis_file:
-        analysis_file.write(stopwords_analysis + ssl_analysis + lsl_analysis)
+    with open(f"Webscraping-Project-Gutenberg/analysis_results/analysis_{book_title}.txt", "w") as file:
+        file.write(stopwords_analysis + ssl_analysis + lsl_analysis)

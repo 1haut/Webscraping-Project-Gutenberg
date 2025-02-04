@@ -26,14 +26,18 @@ def search_book(csv_file):
 
     # Keep prompting the user for a search term until there are results
     while not result_dict:
-        search_term = input("Search book here: ").strip()
+        search_term = input("Search book here: ").strip().lower()
+
+        # Return to top of CSV-file for re-reading of file
+        csv_file.seek(0)
+        reader = csv.DictReader(csv_file)
 
         # Reset the dictionary for each new search
         result_dict = {}
 
         for row in reader:
             if (
-                (search_term.lower() in row['Authors'].lower() or search_term.lower() in row['Title'].lower())
+                (search_term in row['Authors'].lower() or search_term in row['Title'].lower())
                 and row['Type'] == 'Text'
                 and row['Language'] == 'en'):
 

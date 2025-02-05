@@ -3,61 +3,61 @@ import simple_v2
 from unittest.mock import patch
 from io import StringIO
 
-# class TestScraping(unittest.TestCase):
-#     def test_scraping_webpage(self):
-#         TEST_URL = "https://example.com"
-#         scrape_content = simple_v2.grab_book(TEST_URL)
-#         self.assertIn("Example", scrape_content)
+class TestScraping(unittest.TestCase):
+    def test_scraping_webpage(self):
+        TEST_URL = "https://example.com"
+        scrape_content = simple_v2.grab_book(TEST_URL)
+        self.assertIn("Example", scrape_content)
 
-#     def test_content(self):
-#         TEST_URL = "https://example.com"
-#         scrape_content = simple_v2.grab_book(TEST_URL)
-#         self.assertGreater(len(scrape_content), 100)
+    def test_content(self):
+        TEST_URL = "https://example.com"
+        scrape_content = simple_v2.grab_book(TEST_URL)
+        self.assertGreater(len(scrape_content), 100)
 
-#     def test_faulty_site(self):
-#         TEST_URL = "https://opensource.org/not"
-#         with self.assertRaises(Exception):
-#             simple_v2.grab_book(TEST_URL)
+    def test_faulty_site(self):
+        TEST_URL = "https://opensource.org/not"
+        with self.assertRaises(Exception):
+            simple_v2.grab_book(TEST_URL)
 
-#     def test_service_unavailable(self):
-#         TEST_URL = "https://httpstat.us/503"
-#         with self.assertRaises(Exception):
-#             simple_v2.grab_book(TEST_URL)
+    def test_service_unavailable(self):
+        TEST_URL = "https://httpstat.us/503"
+        with self.assertRaises(Exception):
+            simple_v2.grab_book(TEST_URL)
 
-#     def test_url_in_cache(self):
-#         # Moby Dick
-#         TEST_URL = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
-#         self.assertIn(TEST_URL, simple_v2.cache)
+    def test_url_in_cache(self):
+        # Moby Dick
+        TEST_URL = "https://www.gutenberg.org/cache/epub/15/pg15-images.html"
+        self.assertIn(TEST_URL, simple_v2.cache)
 
-#     def test_url_not_in_cache(self):
-#         # A Doll's House
-#         TEST_URL = "https://www.gutenberg.org/cache/epub/2542/pg2542-images.html"
-#         self.assertNotIn(TEST_URL, simple_v2.cache)
+    def test_url_not_in_cache(self):
+        # A Doll's House
+        TEST_URL = "https://www.gutenberg.org/cache/epub/2542/pg2542-images.html"
+        self.assertNotIn(TEST_URL, simple_v2.cache)
 
-# class TestAnalysis(unittest.TestCase):
-#     def test_tokenizer(self):
-#         TEST_STRING = "He who conquers himself is the mightiest warrior. (Confucius)"
-#         tokens = simple_v2.tokenizer(TEST_STRING)
-#         self.assertEqual(len(tokens), 9)
+class TestAnalysis(unittest.TestCase):
+    def test_tokenizer(self):
+        TEST_STRING = "He who conquers himself is the mightiest warrior. (Confucius)"
+        tokens = simple_v2.tokenizer(TEST_STRING)
+        self.assertEqual(len(tokens), 9)
 
-#     def test_stemming(self):
-#         stemming_list = ["program","programming","programer","programs","programmed"]
-#         result = simple_v2.stemming_porter(stemming_list)
-#         for word in result:
-#             with self.subTest(word=word):
-#                 self.assertEqual(word, "program")
+    def test_stemming(self):
+        stemming_list = ["program","programming","programer","programs","programmed"]
+        result = simple_v2.stemming_porter(stemming_list)
+        for word in result:
+            with self.subTest(word=word):
+                self.assertEqual(word, "program")
 
-#     def test_lemmatization(self):
-#         word_inflections = ["exchange", "exchanged", "exchanging", "exchanges"]
-#         words_lemmatized = simple_v2.lemmatization(word_inflections)
-#         for word in words_lemmatized:
-#             with self.subTest(word=word):
-#                 self.assertEqual(word, "exchange")
+    def test_lemmatization(self):
+        word_inflections = ["exchange", "exchanged", "exchanging", "exchanges"]
+        words_lemmatized = simple_v2.lemmatization(word_inflections)
+        for word in words_lemmatized:
+            with self.subTest(word=word):
+                self.assertEqual(word, "exchange")
 
-#     def test_stopword_filtering(self):
-#         TEST_STRING = "The Lion, the Witch and the Wardrobe"
-#         list_no_stopwords = simple_v2.filter_stopwords(TEST_STRING)
-#         self.assertEqual(len(list_no_stopwords), 3)
+    def test_stopword_filtering(self):
+        TEST_STRING = "The Lion, the Witch and the Wardrobe"
+        list_no_stopwords = simple_v2.filter_stopwords(TEST_STRING)
+        self.assertEqual(len(list_no_stopwords), 3)
 
 class TestSearch(unittest.TestCase):
     def setUp(self):

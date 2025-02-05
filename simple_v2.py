@@ -10,6 +10,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from nltk.corpus import stopwords, wordnet
 from nltk.stem import WordNetLemmatizer, PorterStemmer
+from stopwords.stopterms import roman_numerals
 
 # Access cached book
 with open("Webscraping-Project-Gutenberg/books/list_cache.json", "r") as books_cache:
@@ -53,7 +54,7 @@ def search_book(csv_file):
             print("No results found. Please try again.")
 
     # Get ebook numbers
-    ebook_numbers = list(result_dict)
+    ebook_numbers = list(*result_dict.keys())
 
     # Prompt user to choose a valid book
     choice = input("Choose a book: ")
@@ -172,7 +173,9 @@ def filter_stopwords(words):
     filtered_list = []
     # Filtering of stop words
     for word in words:
-        if word not in stop_words:
+        if (word not in stop_words 
+            and word.upper() not in roman_numerals 
+            and len(word) > 0):
             filtered_list.append(word)
 
     return filtered_list
@@ -253,7 +256,7 @@ if __name__ == "__main__":
 
     # Analyze book text filtering stopwords and lemmatizing words
     lemmatized_stopword_list = lemmatization(stopwords_list)
-    lsl_analysis = "Lemmatization Analysis \n\n" +  frequency_analysis(lemmatized_stopword_list)
+    lsl_analysis = "Lemmatization Analysis \n\n" + frequency_analysis(lemmatized_stopword_list)
 
     with open(f"Webscraping-Project-Gutenberg/analysis_results/analysis_{book_title}.txt", "w") as file:
         file.write(stopwords_analysis + ssl_analysis + lsl_analysis)

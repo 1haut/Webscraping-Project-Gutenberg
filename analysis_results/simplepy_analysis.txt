@@ -1,9 +1,0 @@
-Title: Moby Dick 
-
-Most frequent words: 
- Word  Frequency
-whale       1441
-  one        918
-  say        609 
-
-Number of unique words: over 8 thousand

@@ -27,18 +27,14 @@ def search_book(csv_file):
 
     # Keep prompting the user for a search term until there are results
     while not result_dict:
-        search_term = input("Search book here: ").strip().lower()
-
-        # Return to top of CSV-file for re-reading of file
-        csv_file.seek(0)
-        reader = csv.DictReader(csv_file)
+        search_term = input("Search book here: ").strip()
 
         # Reset the dictionary for each new search
         result_dict = {}
 
         for row in reader:
             if (
-                (search_term in row['Authors'].lower() or search_term in row['Title'].lower())
+                (search_term.lower() in row['Authors'].lower() or search_term.lower() in row['Title'].lower())
                 and row['Type'] == 'Text'
                 and row['Language'] == 'en'):
 
@@ -54,7 +50,7 @@ def search_book(csv_file):
             print("No results found. Please try again.")
 
     # Get ebook numbers
-    ebook_numbers = list(*result_dict.keys())
+    ebook_numbers = list(result_dict)
 
     # Prompt user to choose a valid book
     choice = input("Choose a book: ")
@@ -117,7 +113,7 @@ def tokenizer(text):
             continue
 
         # Add token if it's a valid word
-        if token.isalpha():
+        if token.isalpha() or "-" in token:
             words.append(token)
 
     return words
@@ -243,7 +239,7 @@ if __name__ == "__main__":
     book_text = grab_book(url)
 
     # Save book in cache
-    with open("Webscraping-Project-Gutenberg/cached_books/cache.json", "w") as books_cache:
+    with open("Webscraping-Project-Gutenberg/books/list_cache.json", "w") as books_cache:
         books_cache.write(json.dumps(cache))
 
     # Analyze book text filtering stopwords 
